@@ -9,4 +9,3 @@ workflows:
         description: |-
 
         run_if: true
-        inputs:
