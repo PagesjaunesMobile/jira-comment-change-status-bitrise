@@ -3,6 +3,8 @@
 #set -e
 # debug log
 set -x
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 envman add --key BITRISE_GIT_BRANCH --value "develop"
 
 PJ_BUILD_VERSION=8.7
