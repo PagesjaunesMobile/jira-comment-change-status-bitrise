@@ -7,6 +7,4 @@ workflows:
     - path::./:
         title: jira comment and change status
         description: |-
-
         run_if: true
-        inputs:
