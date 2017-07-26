@@ -4,11 +4,6 @@
 # debug log
 set -x
 
-envman add --key BITRISE_GIT_BRANCH --value "develop"
-
-PJ_BUILD_VERSION=8.7
-PJ_BUILD_NUMBER=17071550
-
 #extraire le numero de jira depuis le message du commit
 #commit_msg="$CHANGELOG"
 commit_msg="cn [#TM-163] klk;n d [#TM-164]jkhdk[#TM-162]j"
