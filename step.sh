@@ -1,21 +1,56 @@
 #!/bin/bash
+# fail if any commands fails
+#set -e
+# debug log
+set -x
+envman add --key BITRISE_GIT_BRANCH --value "develop"
 
-echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
+PJ_BUILD_VERSION=8.7
+PJ_BUILD_NUMBER=17071550
 
-#
-# --- Export Environment Variables for other Steps:
-# You can export Environment Variables for other Steps with
-#  envman, which is automatically installed by `bitrise setup`.
-# A very simple example:
-#  envman add --key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
-# Envman can handle piped inputs, which is useful if the text you want to
-# share is complex and you don't want to deal with proper bash escaping:
-#  cat file_with_complex_input | envman add --KEY EXAMPLE_STEP_OUTPUT
-# You can find more usage examples on envman's GitHub page
-#  at: https://github.com/bitrise-io/envman
+#extraire le numero de jira depuis le message du commit
+#commit_msg="$CHANGELOG"
+commit_msg="cn [#TM-163] klk;n d [#TM-164]jkhdk[#TM-162]j"
+#commit_msg="cnqdfqdfqfqsfqs fqsdfqsfqsfj"
 
-#
-# --- Exit codes:
-# The exit code of your Step is very important. If you return
-#  with a 0 exit code `bitrise` will register your Step as "successful".
-# Any non zero exit code will be registered as "failed" by `bitrise`.
+numero_jira="$(echo "$commit_msg" | grep -o '\[#[a-zA-Z.0-9.-]*\]' | sed 's/\[#//g' | sed 's/\]//g')"
+#supprimer les espaces
+numero_jira="$(echo "$numero_jira" | tr -d ' ')"
+#supprimer les doublon
+numero_jira="$(echo "$numero_jira" | xargs -n1 | sort -u | xargs)"
+
+
+
+for jira in $numero_jira; do
+curl -D- -u $LOGIN_JIRA:$PASS_JIRA -X POST --data "{\"body\":\"Le correctif de cette jira est passé sur la branche $BITRISE_GIT_BRANCH \n La version $PJ_BUILD_VERSION $PJ_BUILD_NUMBER est disponible sur Beta .\"}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/comment -v
+#changer le status en correction
+curl -D- -u $LOGIN_JIRA:$PASS_JIRA -X POST  --data "{\"transition\":{\"id\":\"761\"}}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/transitions?expand=transitions.fields -v
+#changer le status en livraison
+curl -D- -u $LOGIN_JIRA:$PASS_JIRA -X POST  --data "{\"transition\":{\"id\":\"771\"}}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/transitions?expand=transitions.fields -v
+
+done
+
+
+
+#envman add --key NUM_JIRA --value "$numero_jira"
+#deduire le nom du projet depuis le numero du jira
+#projet_jira="$(echo "$numero_jira" | sed 's/-.*//')"
+#if  [[ "$projet_jira" == MOBTHOR ]]
+#then
+# envman add --key PROJET_JIRA --value "Mobile-THOR"
+#elif  [[ "$projet_jira" == MOBNAKAMA ]]
+#then
+# envman add --key PROJET_JIRA --value "Mobile-NAKAMA"
+#elif  [[ "$projet_jira" == MOBCOSI ]]
+#then
+#  envman add --key PROJET_JIRA --value "Mobile-COSI"
+#elif  [[ "$projet_jira"  == MOBSHARP ]]
+#then
+#  envman add --key PROJET_JIRA --value "Mobile-SHARP"
+#elif  [[ "$projet_jira" == MOBSNATCH ]]
+#then
+#  envman add --key PROJET_JIRA --value "Mobile-SNATCH"
+#else
+#  envman add --key PROJET_JIRA --value ""
+  #      echo "Aucun projet ne correspond a cette jira"
+#fi
