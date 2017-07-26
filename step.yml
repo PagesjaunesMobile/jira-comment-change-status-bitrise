@@ -2,9 +2,9 @@ title: "Jira comment and status change"
 summary: comment on a jira and change the status
 description: |-
 
-website: https://github.com/...
-source_code_url: https://github.com/...
-support_url: https://github.com/.../issues
+website: https://github.com/?/jira-comment-change-status-bitrise
+source_code_url: https://github.com/?/jira-comment-change-status-bitrise
+support_url: https://github.com/?/jira-comment-change-status-bitrise/issues
 host_os_tags:
   - osx-10.10
 project_type_tags:
