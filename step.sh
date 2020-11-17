@@ -21,6 +21,14 @@ echo "var is unset";
 else 
   curl -D- -k -u $LOGIN_JIRA:$PASS_JIRA -X POST --data "{\"body\":\"Le correctif de cette jira est passé sur la branche $BITRISE_GIT_BRANCH \n La version $PJ_BUILD_VERSION ($APK_BUILD_VERSION) est disponible sur Beta .\n[Voir le détail du build|$BITRISE_BUILD_URL]\"}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/comment -v
 fi
+
+case "$status" in
+ 'Open')
+ 'In Progress')
+  'In Review')
+curl -D- -k -u $LOGIN_JIRA:$PASS_JIRA -X POST --data "{\"transition\":{\"id\":\"31\"}}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/transitions?expand=transitions.fields -v
+esac
+
 #changer le status en correction
 curl -D- -k -u $LOGIN_JIRA:$PASS_JIRA -X POST  --data "{\"transition\":{\"id\":\"761\"}}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/transitions?expand=transitions.fields -v
 #changer le status en livraison
