@@ -23,10 +23,9 @@ else
 fi
 
 case "$status" in
- 'Open')
- 'In Progress')
-  'In Review')
+ 'Open' | 'In Progress' | 'In Review')
 curl -D- -k -u $LOGIN_JIRA:$PASS_JIRA -X POST --data "{\"transition\":{\"id\":\"31\"}}" -H "Content-Type: application/json" $JIRA_URL/rest/api/2/issue/$jira/transitions?expand=transitions.fields -v
+;;
 esac
 
 #changer le status en correction
